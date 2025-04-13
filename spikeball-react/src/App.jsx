@@ -3,6 +3,8 @@ import NavBar from './components/NavBar';
 import Banner from './components/Banner';
 import BrandSection from './components/BrandSection';
 import CoachingSection from './components/CoachingSection';
+import NewsletterSignup from './components/NewsletterSignup';
+import Footer from './components/Footer';
 
 function App() {
   return (
@@ -11,6 +13,8 @@ function App() {
       <Banner />
       <BrandSection />
       <CoachingSection />
+      <NewsletterSignup />
+      <Footer />
     </div>
   );
 }
