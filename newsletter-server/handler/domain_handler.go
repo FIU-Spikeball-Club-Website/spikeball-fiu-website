@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"newsletter-sever/controller"
+	"newsletter-server/controller"
 )
 
 // DomainHandler handles HTTP requests for domain validation

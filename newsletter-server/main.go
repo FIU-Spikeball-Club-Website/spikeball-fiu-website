@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"newsletter/controller"
-	"newsletter/handler"
+	"newsletter-server/controller"
+	"newsletter-server/handler"
 )
 
 func main() {
