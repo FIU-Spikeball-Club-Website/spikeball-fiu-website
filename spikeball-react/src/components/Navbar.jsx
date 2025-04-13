@@ -8,7 +8,6 @@ const NavBar = () => {
         <div className="hidden md:flex space-x-8">
           <a href="#" className="text-white hover:text-purple-300">Home</a>
           <a href="#" className="text-white hover:text-purple-300">Gallery</a>
-          <a href="#" className="text-white hover:text-purple-300">Gallery</a>
           <a href="#" className="text-white hover:text-purple-300">Testimonials</a>
           <a href="#" className="text-white hover:text-purple-300">Contact</a>
         </div>
