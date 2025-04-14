@@ -28,7 +28,7 @@ const NewsletterSignup = () => {
   };
 
   return (
-    <div className="bg-indigo-950 py-12 px-8">
+    <div id="contact" className="bg-indigo-950 py-12 px-8">
       <div className="max-w-6xl mx-auto">
         <div className="bg-indigo-900 rounded-xl p-8 shadow-lg">
           <h3 className="text-white text-2xl font-bold mb-4">Want to join our newsletter?</h3>
@@ -39,7 +39,7 @@ const NewsletterSignup = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="flex-grow px-4 py-3 rounded-lg focus:outline-none"
+              className="flex-grow px-4 py-3 rounded-lg focus:outline-none placeholder-gray-400"
               required
             />
             <button 
