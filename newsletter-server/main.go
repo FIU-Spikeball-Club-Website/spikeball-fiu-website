@@ -10,6 +10,26 @@ import (
 	"newsletter-server/store"
 )
 
+// enableCORS adds CORS headers to allow cross-origin requests
+func enableCORS(handler http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        // Set CORS headers
+        w.Header().Set("Access-Control-Allow-Origin", "*")  // Allow any origin
+        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        
+        // Handle preflight OPTIONS requests
+        if r.Method == "OPTIONS" {
+            w.WriteHeader(http.StatusOK)
+            return
+        }
+        
+        // Process the request
+        handler(w, r)
+    }
+}
+
+
 func main() {
 	// Initialize store
 	emailStore, err := store.NewFileEmailStore("data/emails.csv")
@@ -26,7 +46,7 @@ func main() {
 	emailHandler := handler.NewEmailHandler(emailController)
 	
 	// Set up routes
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/", enableCORS(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
 			http.NotFound(w, r)
 			return
@@ -36,13 +56,13 @@ func main() {
 		fmt.Fprintf(w, "- GET /validate/{domain} - Check domain validity\n")
 		fmt.Fprintf(w, "- GET /emails - List all emails\n")
 		fmt.Fprintf(w, "- POST /emails - Store a new email\n")
-	})
+	}))
 	
 	// Domain routes
-	http.HandleFunc("/validate/", domainHandler.HandleValidateGet)
+	http.HandleFunc("/validate/", enableCORS(domainHandler.HandleValidateGet))
 	
 	// Email routes
-	http.HandleFunc("/emails", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/emails", enableCORS(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			emailHandler.HandleListEmails(w, r)
@@ -51,7 +71,7 @@ func main() {
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
-	})
+	}))
 	
 	// Start the server
 	port := "8080"
