@@ -7,35 +7,54 @@ import (
 
 	"newsletter-server/controller"
 	"newsletter-server/handler"
+	"newsletter-server/store"
 )
 
 func main() {
-	// Initialize controller
-	domainController := controller.NewDomainController()
+	// Initialize store
+	emailStore, err := store.NewFileEmailStore("data/emails.csv")
+	if err != nil {
+		log.Fatalf("Failed to initialize email store: %v", err)
+	}
 	
-	// Initialize handler with controller
+	// Initialize controllers
+	domainController := controller.NewDomainController()
+	emailController := controller.NewEmailController(emailStore, domainController)
+	
+	// Initialize handlers
 	domainHandler := handler.NewDomainHandler(domainController)
+	emailHandler := handler.NewEmailHandler(emailController)
 	
 	// Set up routes
-	http.HandleFunc("/", domainHandler.HandleRoot)
-	http.HandleFunc("/validate", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodPost {
-			domainHandler.HandleValidatePost(w, r)
-		} else {
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/" {
+			http.NotFound(w, r)
+			return
 		}
+		
+		fmt.Fprintf(w, "Email Domain Validator API\n")
+		fmt.Fprintf(w, "- GET /validate/{domain} - Check domain validity\n")
+		fmt.Fprintf(w, "- GET /emails - List all emails\n")
+		fmt.Fprintf(w, "- POST /emails - Store a new email\n")
 	})
-
-	http.HandleFunc("/validate/", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet {
-			domainHandler.HandleValidateGet(w, r)
-		} else {
+	
+	// Domain routes
+	http.HandleFunc("/validate/", domainHandler.HandleValidateGet)
+	
+	// Email routes
+	http.HandleFunc("/emails", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			emailHandler.HandleListEmails(w, r)
+		case http.MethodPost:
+			emailHandler.HandleSaveEmail(w, r)
+		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
 	})
 	
 	// Start the server
 	port := "8080"
-	fmt.Printf("Email Domain Validator server starting on port %s...\n", port)
+	fmt.Printf("Server starting on port %s...\n", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

@@ -71,3 +71,4 @@ func (c *DomainController) ValidateDomain(domain string) DomainResult {
 
 	return result
 }
+

@@ -23,7 +23,7 @@ func NewDomainHandler(controller *controller.DomainController) *DomainHandler {
 
 // HandleRoot renders the homepage
 func (h *DomainHandler) HandleRoot(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
+	if r.URL.Path != "/validate" {
 		http.NotFound(w, r)
 		return
 	}
@@ -42,27 +42,6 @@ func (h *DomainHandler) HandleValidateGet(w http.ResponseWriter, r *http.Request
 	if domain == "" {
 		http.Error(w, "Please provide a domain to validate (e.g., /validate/example.com)", 
 			http.StatusBadRequest)
-		return
-	}
-	
-	h.validateAndRespond(domain, w)
-}
-
-// HandleValidatePost processes POST requests with domain in JSON body
-func (h *DomainHandler) HandleValidatePost(w http.ResponseWriter, r *http.Request) {
-	var requestBody struct {
-		Domain string `json:"domain"`
-	}
-	
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&requestBody); err != nil {
-		http.Error(w, "Invalid request body: "+err.Error(), http.StatusBadRequest)
-		return
-	}
-	
-	domain := strings.TrimSpace(requestBody.Domain)
-	if domain == "" {
-		http.Error(w, "Domain is required", http.StatusBadRequest)
 		return
 	}
 	
