@@ -3,25 +3,40 @@ import React, { useState } from 'react';
 const NewsletterSignup = () => {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState('');
+  const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setStatus('');
+    setMessage('');
     
     try {
-      const response = await fetch(`http://exampleurl:8080/validate/${email}`);
+      // Single request to save email (server will validate)
+      const response = await fetch('http://localhost:8080/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      
+      // Parse the response data
+      const data = await response.json();
       
       if (response.ok) {
         setStatus('success');
-        setEmail('');
+        setMessage(data.message || 'Thank you for subscribing!');
+        setEmail(''); // Clear the input on success
       } else {
         setStatus('error');
+        setMessage(data.message || 'Failed to subscribe. Please try again.');
       }
     } catch (error) {
       setStatus('error');
-      console.error('Error validating email:', error);
+      setMessage('Connection error. Please try again later.');
+      console.error('Error subscribing:', error);
     } finally {
       setLoading(false);
     }
@@ -47,16 +62,16 @@ const NewsletterSignup = () => {
               className={`bg-purple-700 hover:bg-purple-800 text-white font-medium py-3 px-6 rounded-lg transition-colors ${loading ? 'opacity-75 cursor-not-allowed' : ''}`}
               disabled={loading}
             >
-              {loading ? 'Submitting...' : 'Subscribe'}
+              {loading ? 'Subscribing...' : 'Subscribe'}
             </button>
           </form>
           
           {status === 'success' && (
-            <p className="mt-4 text-green-400">Thank you for subscribing!</p>
+            <p className="mt-4 text-green-400">{message}</p>
           )}
           
           {status === 'error' && (
-            <p className="mt-4 text-red-400">There was an error. Please try again.</p>
+            <p className="mt-4 text-red-400">{message}</p>
           )}
         </div>
       </div>
