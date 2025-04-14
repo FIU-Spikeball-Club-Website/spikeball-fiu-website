@@ -23,44 +23,64 @@ func NewEmailHandler(controller *controller.EmailController) *EmailHandler {
 
 // HandleSaveEmail processes requests to save a validated email
 func (h *EmailHandler) HandleSaveEmail(w http.ResponseWriter, r *http.Request) {
-	// Parse request body
-	var request struct {
-		Email string `json:"email"`
-	}
-	
-	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil {
-		http.Error(w, "Invalid request format", http.StatusBadRequest)
-		return
-	}
-	
-	// Save email
-	err = h.controller.SaveEmail(request.Email)
-	if err != nil {
-		// Return different status code for duplicate emails
-		if strings.Contains(err.Error(), "already exists") {
-			http.Error(w, err.Error(), http.StatusConflict)
-		} else {
-			http.Error(w, "Failed to save email: "+err.Error(), http.StatusInternalServerError)
-		}
-		return
-	}
-	
-	// Prepare success response
-	response := struct {
-		Success bool   `json:"success"`
-		Message string `json:"message"`
-		Email   string `json:"email"`
-	}{
-		Success: true,
-		Message: "Email successfully saved",
-		Email:   request.Email,
-	}
-	
-	// Return success response
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(response)
+    // Parse request body
+    var request struct {
+        Email string `json:"email"`
+    }
+    
+    err := json.NewDecoder(r.Body).Decode(&request)
+    if err != nil {
+        http.Error(w, "Invalid request format", http.StatusBadRequest)
+        return
+    }
+    
+    // Save email (validation happens in the controller)
+    err = h.controller.SaveEmail(request.Email)
+    if err != nil {
+        statusCode := http.StatusInternalServerError
+        errorMessage := err.Error()
+        
+        // Determine appropriate status code based on error type
+        switch {
+        case strings.Contains(errorMessage, "already exists"):
+            statusCode = http.StatusConflict
+        case strings.Contains(errorMessage, "invalid email format") || 
+             strings.Contains(errorMessage, "cannot be empty"):
+            statusCode = http.StatusBadRequest
+        case strings.Contains(errorMessage, "not valid for email"):
+            statusCode = http.StatusBadRequest
+        }
+        
+        // Return structured error response
+        response := struct {
+            Success bool   `json:"success"`
+            Message string `json:"message"`
+        }{
+            Success: false,
+            Message: errorMessage,
+        }
+        
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(statusCode)
+        json.NewEncoder(w).Encode(response)
+        return
+    }
+    
+    // Prepare success response
+    response := struct {
+        Success bool   `json:"success"`
+        Message string `json:"message"`
+        Email   string `json:"email"`
+    }{
+        Success: true,
+        Message: "Email successfully saved",
+        Email:   request.Email,
+    }
+    
+    // Return success response
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusCreated)
+    json.NewEncoder(w).Encode(response)
 }
 
 // HandleListEmails retrieves all stored emails
