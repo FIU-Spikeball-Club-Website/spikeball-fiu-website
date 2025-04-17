@@ -15,7 +15,7 @@ function App() {
       <header>
         <NavBar />
       </header>
-
+      
       <main className="flex-grow">
         <Banner />
         <BrandSection />
@@ -25,6 +25,7 @@ function App() {
         <SidePics/>
         <NewsletterSignup />
       </main>
+      
       <Footer />
     </div>
   );
