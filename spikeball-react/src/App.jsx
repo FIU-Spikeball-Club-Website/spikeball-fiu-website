@@ -1,8 +1,6 @@
 import React from 'react';
 import NavBar from './components/Navbar';
 import Banner from './components/Banner';
-import BrandSection from './components/BrandSection';
-import CoachingSection from './components/CoachingSection';
 import NewsletterSignup from './components/NewsletterSignup';
 import Footer from './components/Footer';
 import Cards from './components/Cards';
@@ -18,8 +16,6 @@ function App() {
       
       <main className="flex-grow">
         <Banner />
-        <BrandSection />
-        <CoachingSection />
         <WebText/>
         <Cards/>
         <SidePics/>
