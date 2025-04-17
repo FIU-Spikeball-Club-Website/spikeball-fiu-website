@@ -5,6 +5,9 @@ import BrandSection from './components/BrandSection';
 import CoachingSection from './components/CoachingSection';
 import NewsletterSignup from './components/NewsletterSignup';
 import Footer from './components/Footer';
+import Cards from './components/Cards';
+import SidePics from './components/SidePics';
+import WebText from './components/WebText';
 
 function App() {
   return (
@@ -13,6 +16,9 @@ function App() {
       <Banner />
       <BrandSection />
       <CoachingSection />
+      <WebText/>
+      <Cards/>
+      <SidePics/>
       <NewsletterSignup />
       <Footer />
     </div>
