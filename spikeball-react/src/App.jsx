@@ -8,12 +8,18 @@ import Footer from './components/Footer';
 
 function App() {
   return (
-    <div className="min-h-screen bg-white">
-      <NavBar />
-      <Banner />
-      <BrandSection />
-      <CoachingSection />
-      <NewsletterSignup />
+    <div className="min-h-screen flex flex-col bg-indigo-950">
+      <header>
+        <NavBar />
+      </header>
+      
+      <main className="flex-grow">
+        <Banner />
+        <BrandSection />
+        <CoachingSection />
+        <NewsletterSignup />
+      </main>
+      
       <Footer />
     </div>
   );
