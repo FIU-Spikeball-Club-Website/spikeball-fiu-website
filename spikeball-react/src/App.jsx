@@ -11,15 +11,20 @@ import WebText from './components/WebText';
 
 function App() {
   return (
-    <div className="min-h-screen bg-white">
-      <NavBar />
-      <Banner />
-      <BrandSection />
-      <CoachingSection />
-      <WebText/>
-      <Cards/>
-      <SidePics/>
-      <NewsletterSignup />
+    <div className="min-h-screen flex flex-col bg-indigo-950">
+      <header>
+        <NavBar />
+      </header>
+
+      <main className="flex-grow">
+        <Banner />
+        <BrandSection />
+        <CoachingSection />
+        <WebText/>
+        <Cards/>
+        <SidePics/>
+        <NewsletterSignup />
+      </main>
       <Footer />
     </div>
   );
